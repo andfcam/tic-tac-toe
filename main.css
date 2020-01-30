@@ -3,18 +3,31 @@
   padding: 0;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Courier New", Courier, monospace;
 }
 
 h1 {
   text-align: center;
-  font-family: 'Courier New', Courier, monospace;
   font-size: 24px;
   padding: 25px;
 }
 
-#game {
-  margin: 0 auto;
+main {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+  text-align: center;
+}
+
+main .score p {
+  font-size: 24px;
+}
+
+main #game {
+  margin: 0 50px;
   display: -ms-grid;
   display: grid;
   gap: 25px;
@@ -27,7 +40,7 @@ h1 {
   height: 600px;
 }
 
-#game button {
+main #game button {
   cursor: pointer;
   border-radius: 5px;
   display: -webkit-box;
@@ -39,58 +52,59 @@ h1 {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 80px;
 }
 
-#top-left {
+main #game #top-left {
   -ms-grid-row: 1;
   -ms-grid-column: 1;
   grid-area: top-left;
 }
 
-#top-middle {
+main #game #top-middle {
   -ms-grid-row: 1;
   -ms-grid-column: 2;
   grid-area: top-middle;
 }
 
-#top-right {
+main #game #top-right {
   -ms-grid-row: 1;
   -ms-grid-column: 3;
   grid-area: top-right;
 }
 
-#middle-left {
+main #game #middle-left {
   -ms-grid-row: 2;
   -ms-grid-column: 1;
   grid-area: middle-left;
 }
 
-#middle-middle {
+main #game #middle-middle {
   -ms-grid-row: 2;
   -ms-grid-column: 2;
   grid-area: middle-middle;
 }
 
-#middle-right {
+main #game #middle-right {
   -ms-grid-row: 2;
   -ms-grid-column: 3;
   grid-area: middle-right;
 }
 
-#bottom-left {
+main #game #bottom-left {
   -ms-grid-row: 3;
   -ms-grid-column: 1;
   grid-area: bottom-left;
 }
 
-#bottom-middle {
+main #game #bottom-middle {
   -ms-grid-row: 3;
   -ms-grid-column: 2;
   grid-area: bottom-middle;
 }
 
-#bottom-right {
+main #game #bottom-right {
   -ms-grid-row: 3;
   -ms-grid-column: 3;
   grid-area: bottom-right;
