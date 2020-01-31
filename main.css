@@ -109,4 +109,9 @@ main #game #bottom-right {
   -ms-grid-column: 3;
   grid-area: bottom-right;
 }
+
+.highlighted {
+  -webkit-text-decoration: underline lime;
+          text-decoration: underline lime;
+}
 /*# sourceMappingURL=main.css.map */

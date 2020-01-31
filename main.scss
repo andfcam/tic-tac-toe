@@ -11,16 +11,16 @@ h1 {
   padding: 25px;
 }
 
+h2 {
+        
+}
+
 main {
   display: flex;
   justify-content: space-evenly;
   text-align: center;
 
   .score {
-    h2 {
-        
-    }
-
     p {
       font-size: 24px;
     }
@@ -85,4 +85,8 @@ main {
       grid-area: bottom-right;
     }
   }
+}
+
+.highlighted {
+    text-decoration: underline lime;
 }

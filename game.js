@@ -20,10 +20,8 @@ const processClick = (button) => {
         } else {
             button.innerText = player2Symbol;
         }
-        turn++;
+        toggleTurn();
         checkForWin();
-        player1Turn = !player1Turn;
-        // add class to h2 player title that underlines for whose turn it is.
     }
 }
 
@@ -58,9 +56,18 @@ const resetBoard = () => {
     turn = 0;
 }
 
+const toggleTurn = () => {
+    const title1 = document.getElementById('title1');
+    const title2 = document.getElementById('title2');
+    title1.classList.toggle('highlighted');
+    title2.classList.toggle('highlighted');
+    turn++;
+    player1Turn = !player1Turn;
+}
+
 const updateScore = () => {
-    const scoreDisplay1 = document.getElementById('player1');
-    const scoreDisplay2 = document.getElementById('player2');
+    const scoreDisplay1 = document.getElementById('score1');
+    const scoreDisplay2 = document.getElementById('score2');
     scoreDisplay1.innerText = player1Points;
     scoreDisplay2.innerText = player2Points;
 }
