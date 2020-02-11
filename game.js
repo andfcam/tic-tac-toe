@@ -1,92 +1,137 @@
-// win conditions are a mess
-// tell whose turn it is
-// highlight winning tiles, reset on click
+class Game {
+    constructor() {
+        this.symbolP1 = 'x';
+        this.symbolP2 = 'o';
+        this.nameP1 = 'player 1';
+        this.nameP2 = 'player 2';
+        this.pointsP1 = 0;
+        this.pointsP2 = 0;
 
-let tiles;
+        this.player1 = true;
+        this.turn = 1;
+    }
 
-const player1Symbol = 'X';
-const player2Symbol = 'O';
+    start() {
+        this.createTable();
 
-let player1Points = 0;
-let player2Points = 0;
+        this.cells = document.querySelectorAll('td');
+        this.cells.forEach(cell => { cell.onclick = (event) => this.newTurn(event.target); });
 
-let player1Turn = true;
-let turn = 0;
+        this.populateDom();
+    }
 
-const processClick = (tile) => {
-    if (!tileOccupied(tile)) {
-        if (player1Turn) {
-            tile.innerText = player1Symbol;
-        } else {
-            tile.innerText = player2Symbol;
+    populateDom() {
+        document.querySelector('#p1 .name').innerText = this.nameP1;
+        document.querySelector('#p2 .name').innerText = this.nameP2;
+        document.querySelector('#p1 .symbol').innerText = this.symbolP1;
+        document.querySelector('#p2 .symbol').innerText = this.symbolP2;
+        this.updateScore();
+    }
+
+    createTable() {
+        const table = document.querySelector('table');
+
+        for (let r = 0; r < 3; r++) {
+            table.insertRow();
+            for (let c = 0; c < 3; c++) {
+                table.rows[r].insertCell();
+            }
         }
-        checkForWin();
-        toggleTurn();
+    }
+
+    newTurn(cell) {
+        if (Utils.cellOccupied(cell)) return;
+
+        this.drawSymbol(cell);
+        this.checkForWin();
+        this.changeTurn();
+    }
+
+    drawSymbol(cell) {
+        if (this.player1) cell.innerText = this.symbolP1;
+        else cell.innerText = this.symbolP2;
+    }
+
+    winningRow() {
+        for (let i = 0; i <= 6; i += 3) {
+            if (Utils.cellsEqual(this.cells[i], this.cells[i + 1], this.cells[i + 2]) && Utils.cellOccupied(this.cells[i])) return true;
+        }
+        return false;
+    }
+
+    winningColumn() {
+        for (let i = 0; i < 3; i++) {
+            if (Utils.cellsEqual(this.cells[i], this.cells[i + 3], this.cells[i + 6]) && Utils.cellOccupied(this.cells[i])) return true;
+        }
+        return false;
+    }
+
+    winningDiagonal() {
+        if ((Utils.cellsEqual(this.cells[0], this.cells[4], this.cells[8]) ||
+            Utils.cellsEqual(this.cells[2], this.cells[4], this.cells[6])) &&
+            Utils.cellOccupied(this.cells[4])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    checkForWin() {
+        console.log(this.turn);
+        if (this.winningRow() || this.winningColumn() || this.winningDiagonal()) {
+            this.processWinner();
+        } else if (this.turn === 9) {
+            this.processDraw();
+        }
+    }
+
+    processWinner() {
+        if (this.player1) {
+            this.popup({ h2: `Player 1 wins!`, p: `Congratulations!`, src: `url(./img/victory.gif)` });
+            this.pointsP1++;
+        } else {
+            this.popup({ h2: `Computer wins!`, p: `01101100 01101111 01101100!`, src: `url(./img/robot.gif)` });
+            this.pointsP2++;
+        }
+        this.updateScore();
+        this.resetBoard();
+    }
+
+    processDraw() {
+        this.popup({ h2: `It's a draw!`, p: `Play again?`, src: `url(./img/bushes.gif)` });
+        this.resetBoard();
+    }
+
+    popup(data) {
+        document.querySelector('#popup').classList.toggle('hidden');
+        setTimeout(() => { document.querySelector('#popup').classList.toggle('hidden'); }, 2000);
+        document.querySelector('#popup h2').innerText = data.h2;
+        document.querySelector('#popup p').innerText = data.p;
+        document.querySelector('#popup #img').style.backgroundImage = data.src;
+    }
+
+    resetBoard() {
+        this.cells.forEach(cell => { cell.innerText = null; });
+        this.turn = 0;
+    }
+
+    changeTurn() {
+        this.toggleActive();
+        this.turn++;
+        this.player1 = !this.player1;
+    }
+
+    toggleActive() {
+        const symbolP1 = document.querySelector('#p1 .symbol');
+        const symbolP2 = document.querySelector('#p2 .symbol');
+        symbolP1.classList.toggle('active');
+        symbolP2.classList.toggle('active');
+    }
+
+    updateScore() {
+        const scoreP1 = document.querySelector('#p1 .score');
+        const scoreP2 = document.querySelector('#p2 .score');
+        scoreP1.innerText = this.pointsP1;
+        scoreP2.innerText = this.pointsP2;
     }
 }
-
-const tileOccupied = (tile) => (tile.innerText.length > 0);
-
-const tilesEqual = (tile1, tile2, tile3) => (tile1.innerText == tile2.innerText && tile2.innerText == tile3.innerText);
-
-const checkForWin = () => {
-    // const winConditions = [
-    //     [0,1,2],
-    //     [3,4,5],
-    // ];
-    // // nested for loop, check occupied and equal, tiles[x], tiles[y], tiles[z]
-    if ((tilesEqual(tiles[0], tiles[1], tiles[2]) && tileOccupied(tiles[0])) ||
-        (tilesEqual(tiles[3], tiles[4], tiles[5]) && tileOccupied(tiles[3])) ||
-        (tilesEqual(tiles[6], tiles[7], tiles[8]) && tileOccupied(tiles[6])) ||
-        (tilesEqual(tiles[0], tiles[3], tiles[6]) && tileOccupied(tiles[0])) ||
-        (tilesEqual(tiles[1], tiles[4], tiles[7]) && tileOccupied(tiles[1])) ||
-        (tilesEqual(tiles[2], tiles[5], tiles[8]) && tileOccupied(tiles[2])) ||
-        (tilesEqual(tiles[0], tiles[4], tiles[8]) && tileOccupied(tiles[0])) ||
-        (tilesEqual(tiles[2], tiles[4], tiles[6]) && tileOccupied(tiles[2]))) {
-        if (player1Turn) {
-            alert('Player 1 wins!');
-            player1Points++;
-        } else {
-            alert('Player 2 wins!');
-            player2Points++;
-        }
-        updateScore();
-        resetBoard();
-    } else if (turn == 9) {
-        alert("It's a draw!");
-        resetBoard();
-    }
-}
-
-const resetBoard = () => {
-    tiles.forEach(tile => {
-        tile.innerText = null;
-    });
-    turn = 0;
-}
-
-const toggleTurn = () => {
-    const title1 = document.getElementById('title1');
-    const title2 = document.getElementById('title2');
-    title1.classList.toggle('highlighted');
-    title2.classList.toggle('highlighted');
-    turn++;
-    player1Turn = !player1Turn;
-}
-
-const updateScore = () => {
-    const scoreDisplay1 = document.getElementById('score1');
-    const scoreDisplay2 = document.getElementById('score2');
-    scoreDisplay1.innerText = player1Points;
-    scoreDisplay2.innerText = player2Points;
-}
-
-window.onload = () => {
-    tiles = [...document.getElementsByTagName('button')];
-    tiles.forEach(tile => {
-        tile.onclick = () => {
-            processClick(tile);
-        };
-    });
-    updateScore();
-};

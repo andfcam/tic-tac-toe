@@ -2,105 +2,83 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-}
-
-h1 {
-  font-weight: 100;
-  font-style: italic;
-  font-size: 50px;
-  padding: 25px;
-}
-
-h2 {
-  font-weight: 600;
   font-size: 40px;
-  margin-bottom: 15px;
-  border-bottom: 5px solid white;
-}
-
-header {
-  text-align: center;
-
-  p {
-    font-weight: 200;
-  }
 }
 
 main {
   display: flex;
-  justify-content: space-evenly;
+  width: 100%;
+  min-height: 100vh;
   align-items: center;
+  justify-content: center;
   text-align: center;
+  background-color: #f7f7f7;
+  font-family: "Major Mono Display", monospace;
+}
 
-  .score {
-    p {
-      font-weight: 100;
-      font-size: 50px;
-    }
+td {
+  cursor: pointer;
+  background-color: #fbfbfb;
+  border: 1px solid grey;
+  border-radius: 5px;
+  width: 150px;
+  height: 150px;
+  text-align: center;
+  font-size: 120px;
+}
+
+#game {
+  padding: 30px;
+}
+
+.symbol {
+  font-size: 120px;
+  transition: 0.4s;
+}
+
+.active {
+  color: limegreen;
+}
+
+#popup {
+  position: absolute;
+  display: flex;
+  width: 600px;
+  height: 160px;
+  background-color: lightgray;
+  border-radius: 20px;
+  font-family: "Inter", sans-serif;
+  opacity: 0.9;
+
+  #img {
+    width: 200px;
+    background-image: url(./img/victory.gif);
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 20px 0 0 20px;
+    background-size: cover;
   }
 
-  #game {
-    margin: 0 50px;
-    display: grid;
-    gap: 25px;
-    grid-template-areas:
-      "top-left top-middle top-right"
-      "middle-left middle-middle middle-right"
-      "bottom-left bottom-middle bottom-right";
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    width: 600px;
-    height: 600px;
+  #text {
+    display: flex;
+    padding-left: 50px;
+    flex-wrap: wrap;
+    align-content: center;
+    text-align: left;
 
-    button {
-      cursor: pointer;
-      border-radius: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    h2 {
+      flex-basis: 100%;
       font-weight: 900;
-      font-size: 80px;
     }
 
-    #top-left {
-      grid-area: top-left;
-    }
-
-    #top-middle {
-      grid-area: top-middle;
-    }
-
-    #top-right {
-      grid-area: top-right;
-    }
-
-    #middle-left {
-      grid-area: middle-left;
-    }
-
-    #middle-middle {
-      grid-area: middle-middle;
-    }
-
-    #middle-right {
-      grid-area: middle-right;
-    }
-
-    #bottom-left {
-      grid-area: bottom-left;
-    }
-
-    #bottom-middle {
-      grid-area: bottom-middle;
-    }
-
-    #bottom-right {
-      grid-area: bottom-right;
+    p {
+      font-size: 20px;
+      font-style: italic;
+      font-weight: 200;
     }
   }
 }
 
-.highlighted {
-  border-bottom: 5px solid lime;
+.hidden {
+  display: none !important;
 }
