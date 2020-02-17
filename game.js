@@ -1,14 +1,10 @@
 class Game {
     constructor() {
-        this.symbolP1 = 'x';
-        this.symbolP2 = 'o';
-        this.nameP1 = 'player 1';
-        this.nameP2 = 'player 2';
-        this.pointsP1 = 0;
-        this.pointsP2 = 0;
+        this.player1 = { name: 'player 1', symbol: 'x', points: 0, turn: true };
+        this.player2 = { name: 'player 2', symbol: 'o', points: 0, turn: false };
+        this.turns = 1;
 
-        this.player1 = true;
-        this.turn = 1;
+        this.conditions = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
     }
 
     start() {
@@ -18,14 +14,6 @@ class Game {
         this.cells.forEach(cell => { cell.onclick = (event) => this.newTurn(event.target); });
 
         this.populateDom();
-    }
-
-    populateDom() {
-        document.querySelector('#p1 .name').innerText = this.nameP1;
-        document.querySelector('#p2 .name').innerText = this.nameP2;
-        document.querySelector('#p1 .symbol').innerText = this.symbolP1;
-        document.querySelector('#p2 .symbol').innerText = this.symbolP2;
-        this.updateScore();
     }
 
     createTable() {
@@ -39,6 +27,14 @@ class Game {
         }
     }
 
+    populateDom() {
+        document.querySelector('#p1 .name').innerText = this.player1.name;
+        document.querySelector('#p2 .name').innerText = this.player2.name;
+        document.querySelector('#p1 .symbol').innerText = this.player1.symbol;
+        document.querySelector('#p2 .symbol').innerText = this.player2.symbol;
+        this.updateScore();
+    }
+
     newTurn(cell) {
         if (Utils.cellOccupied(cell)) return;
 
@@ -48,50 +44,27 @@ class Game {
     }
 
     drawSymbol(cell) {
-        if (this.player1) cell.innerText = this.symbolP1;
-        else cell.innerText = this.symbolP2;
-    }
-
-    winningRow() {
-        for (let i = 0; i <= 6; i += 3) {
-            if (Utils.cellsEqual(this.cells[i], this.cells[i + 1], this.cells[i + 2]) && Utils.cellOccupied(this.cells[i])) return true;
-        }
-        return false;
-    }
-
-    winningColumn() {
-        for (let i = 0; i < 3; i++) {
-            if (Utils.cellsEqual(this.cells[i], this.cells[i + 3], this.cells[i + 6]) && Utils.cellOccupied(this.cells[i])) return true;
-        }
-        return false;
-    }
-
-    winningDiagonal() {
-        if ((Utils.cellsEqual(this.cells[0], this.cells[4], this.cells[8]) ||
-            Utils.cellsEqual(this.cells[2], this.cells[4], this.cells[6])) &&
-            Utils.cellOccupied(this.cells[4])) {
-            return true;
-        } else {
-            return false;
-        }
+        if (this.player1.turn) cell.innerText = this.player1.symbol;
+        else cell.innerText = this.player2.symbol;
     }
 
     checkForWin() {
-        console.log(this.turn);
-        if (this.winningRow() || this.winningColumn() || this.winningDiagonal()) {
-            this.processWinner();
-        } else if (this.turn === 9) {
-            this.processDraw();
-        }
+        this.conditions.forEach(condition => {
+            if ((Utils.cellsEqual(this.cells[condition[0]], this.cells[condition[1]], this.cells[condition[2]])) &&
+                Utils.cellOccupied(this.cells[condition[0]])) {
+                this.processWinner();
+            }
+        });
+        if (this.turns === 9) this.processDraw();
     }
 
     processWinner() {
-        if (this.player1) {
+        if (this.player1.turn) {
             this.popup({ h2: `Player 1 wins!`, p: `Congratulations!`, src: `url(./img/victory.gif)` });
-            this.pointsP1++;
+            this.player1.points++;
         } else {
             this.popup({ h2: `Computer wins!`, p: `01101100 01101111 01101100!`, src: `url(./img/robot.gif)` });
-            this.pointsP2++;
+            this.player2.points++;
         }
         this.updateScore();
         this.resetBoard();
@@ -112,26 +85,48 @@ class Game {
 
     resetBoard() {
         this.cells.forEach(cell => { cell.innerText = null; });
-        this.turn = 0;
+        this.turns = 0; // turn changes after, increments to 1
     }
 
     changeTurn() {
         this.toggleActive();
-        this.turn++;
-        this.player1 = !this.player1;
+        this.turns++;
+        this.player1.turn = !this.player1.turn;
+        this.player2.turn = !this.player2.turn;
     }
 
     toggleActive() {
-        const symbolP1 = document.querySelector('#p1 .symbol');
-        const symbolP2 = document.querySelector('#p2 .symbol');
-        symbolP1.classList.toggle('active');
-        symbolP2.classList.toggle('active');
+        document.querySelector('#p1 .symbol').classList.toggle('active');
+        document.querySelector('#p2 .symbol').classList.toggle('active');
     }
 
     updateScore() {
-        const scoreP1 = document.querySelector('#p1 .score');
-        const scoreP2 = document.querySelector('#p2 .score');
-        scoreP1.innerText = this.pointsP1;
-        scoreP2.innerText = this.pointsP2;
+        document.querySelector('#p1 .score').innerText = this.player1.points;
+        document.querySelector('#p2 .score').innerText = this.player2.points;
     }
 }
+
+    // -- Attempted to process win conditions with fewer explicitly declared conditions
+    // winningRow() {
+    //     for (let i = 0; i <= 6; i += 3) {
+    //         if (Utils.cellsEqual(this.cells[i], this.cells[i + 1], this.cells[i + 2]) && Utils.cellOccupied(this.cells[i])) return true;
+    //     }
+    //     return false;
+    // }
+
+    // winningColumn() {
+    //     for (let i = 0; i < 3; i++) {
+    //         if (Utils.cellsEqual(this.cells[i], this.cells[i + 3], this.cells[i + 6]) && Utils.cellOccupied(this.cells[i])) return true;
+    //     }
+    //     return false;
+    // }
+
+    // winningDiagonal() {
+    //     if ((Utils.cellsEqual(this.cells[0], this.cells[4], this.cells[8]) ||
+    //         Utils.cellsEqual(this.cells[2], this.cells[4], this.cells[6])) &&
+    //         Utils.cellOccupied(this.cells[4])) {
+    //         return true;
+    //     } else {
+    //         return false;
+    //     }
+    // }
